@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ScaView</title>
+  <script type="text/javascript" src="js/pxjunk.util.js" embed="embed"></script>
+  <script type="text/javascript" src="js/pxjunk.table.js" embed="embed"></script>
+  <script type="text/javascript" src="js/pxjunk.scalepack.sca.js" embed="embed"></script>
+  <script type="text/javascript" src="js/pxjunk.scalepack.log.js" embed="embed"></script>
+  <script type="text/javascript">
+	var drawWilsonPlot = function(sca, oLog) {
+		// Wilson-plot-like calculation
+		// X: (1 / 2d)^2
+		// Y: ln(<I> / fx^2)
+		if(!sca){ alert("Calculate, first!!"); return; }
+		var shells = sca.reflections.splitToShellsByShells(200),
+			intensity,
+			getX = function(shell) { return Math.pow(1 / (2 * shell.resolution), 2); },
+			getY = function(shell) {
+				// 5 C + 1.35 N + 1.5 O + 8 H
+				var fC = calcScatteringFactor("C", shell.resolution),
+					fN = calcScatteringFactor("N", shell.resolution),
+					fO = calcScatteringFactor("O", shell.resolution),
+					fH = calcScatteringFactor("H", shell.resolution),
+					fx = fC * 5 + fN * 1.35 + fO * 1.5 + fH * 8;
+				return Math.log(shell.meanI / Math.pow(fx, 2));
+			};
+//		var getY = function(shell) { return Math.log(shell.meanI); };
+
+		var minX = getX(shells[shells.length-1]),
+			maxX = getX(shells[0]),
+			minY, maxY;
+
+		for(var i=0;i<shells.length;i++){
+			var y = getY(shells[i]);
+			if(i === 0){ maxY = minY = y; continue; }
+			if(maxY < y){ maxY = y; continue; }
+			if(minY > y){ minY = y; continue; }
+		}
+		minX -= (maxX - minX) / 50;
+		maxX += (maxX - minX) / 50;
+		minY -= (maxY - minY) / 50;
+		maxY += (maxY - minY) / 50;
+
+		var chk = false;
+		var plots = [];
+		for(var i=0;i<shells.length;i++){ plots.push([getX(shells[i]), getY(shells[i])]); }
+
+		var canvas = document.getElementById("canvas1");
+		var conf = {x:{max:maxX, min:minX}, y:{max:maxY, min:minY}, margin:{top:5, right:5, bottom:60, left:20}};
+		var pa = new PlotArea(canvas, conf);
+		pa.clear();
+		pa.drawAxis("(1/2d)^2", "ln(<I>/fx^2)");
+		pa.plot(plots, "red");
+		for(var i=0;i<oLog.shells.length;i++){
+			pa.drawMarkerX(getX(oLog.shells[i]), oLog.shells[i].resolution.toFixed(2), 25);
+		}
+	};
+
+	var drawMosaicity = function(oLog) {
+		if(!oLog){ alert("Calculate, first!!"); return; }
+		var canvas = document.getElementById("canvas2");
+		var maxY = oLog.films.maxMosaicity,
+			minY = oLog.films.minMosaicity;
+		maxY += (maxY - minY) / 20;
+		minY -= (maxY - minY) / 20;
+		var conf = {
+			x:{max:oLog.films.maxNo, min:oLog.films.minNo}, y:{max:maxY, min:minY},
+			margin: {top:5, right:5, bottom:20, left:60}
+		};
+		var plots = [];
+		for(var i=0;i<oLog.films.length;i++){ plots.push([oLog.films[i].no, oLog.films[i].mosaicity]); }
+		var pa = new PlotArea(canvas, conf);
+		pa.clear();
+		pa.drawAxis("Film No.", "Mosaicity");
+		pa.plot(plots, "red");
+		pa.drawMarkerY(oLog.films.maxMosaicity, oLog.films.maxMosaicity.toFixed(3), 20);
+		pa.drawMarkerY(oLog.films.minMosaicity, oLog.films.minMosaicity.toFixed(3), 20);
+	};
+
+	var drawCrystalRotations = function(oLog) {
+		if(!oLog){ alert("Calculate, first!!"); return; }
+		var films = oLog.films;
+		var canvas = document.getElementById("canvas3");
+		var maxCX = films.maxCrystalX - films.meanCrystalX,
+			minCX = films.minCrystalX - films.meanCrystalX,
+			maxCY = films.maxCrystalY - films.meanCrystalY,
+			minCY = films.minCrystalY - films.meanCrystalY,
+			maxCZ = films.maxCrystalZ - films.meanCrystalZ,
+			minCZ = films.minCrystalZ - films.meanCrystalZ;
+		var maxY = Math.max(maxCX, maxCY, maxCZ),
+			minY = Math.min(minCX, minCY, minCZ);
+		maxY += (maxY - minY) / 20;
+		minY -= (maxY - minY) / 20;
+		var conf = {x:{max:oLog.films.maxNo, min:oLog.films.minNo}, y:{max:maxY, min:minY},
+			margin: {top:5, right:5, bottom:20, left:60}
+		};
+		var plots = [];
+		for(var i=0;i<films.length;i++){ plots.push([films[i].no, films[i].crystalX - films.meanCrystalX]); }
+		var pa = new PlotArea(canvas, conf);
+		pa.clear();
+		pa.drawAxis("Film No.", "Diff. from Ave.");
+		pa.plot(plots, "red");
+		plots.length = 0;
+		for(var i=0;i<films.length;i++){ plots.push([films[i].no, films[i].crystalY - films.meanCrystalY]); }
+		pa.plot(plots, "green");
+		plots.length = 0;
+		for(var i=0;i<films.length;i++){ plots.push([films[i].no, films[i].crystalZ - films.meanCrystalZ]); }
+		pa.plot(plots, "blue");
+		pa.drawMarkerY(Math.max(maxCX, maxCY, maxCZ), Math.max(maxCX, maxCY, maxCZ).toFixed(3), 20);
+		pa.drawMarkerY(Math.min(minCX, minCY, minCZ), Math.min(minCX, minCY, minCZ).toFixed(3), 20);
+		pa.drawMarkerY(0, "0.000", 20);
+	};
+
+	window.addEventListener("load", function() {
+		var oLog = oSca = null;
+		var useSca = document.getElementById("chkUseSca").checked;
+		document.getElementById("cmdSave").addEventListener("click", function(e) {
+			if(!oLog){ alert("Calculate, first!!"); return; }
+			var lines = oLog.toCSV();
+			location.href = "data:application/x-download," + encodeURIComponent(lines.join("\n") + "\n");
+		}, false);
+		document.getElementById("cmdSaveSca").addEventListener("click", function(e) {
+			if(!oSca){ alert("Calculate, first!!"); return; }
+			var lines = oSca.toCSV(oLog.shells);
+			location.href = "data:application/x-download," + encodeURIComponent(lines.join("\n") + "\n");
+		}, false);
+		document.getElementById("cmdReadLog").addEventListener("click", function() {
+			var scaFile = document.getElementById("fileSca").files[0],
+				logFile = document.getElementById("fileLog").files[0],
+				readerLog = new FileReader(),
+				readerSca = new FileReader(),
+				tdSca = document.getElementById("scaStatus"),
+				tdLog = document.getElementById("logStatus");
+			var clearCanvas = function(id) {
+				var canvas = document.getElementById(id);
+				var ctx = canvas.getContext("2d");
+				var cf = ctx.fillStyle;
+				ctx.fillStyle = "white";
+				ctx.fillRect(0, 0, canvas.width - 1, canvas.height - 1);
+				ctx.fillStyle = cf;
+			};
+			oLog = oSca = null;
+			clearCanvas("canvas1");
+			clearCanvas("canvas2");
+			clearCanvas("canvas3");
+
+			readerLog.onload = function(e) {
+				tdLog.textContent = "Parsing";
+				var lines = e.target.result.split("\n");
+ 				oLog = new ScalepackLog(lines);
+ 				tdLog.textContent = "Done";
+				document.getElementById("tdAllObservations").textContent = oLog.allObservations;
+				document.getElementById("tdObservationsOver1").textContent = oLog.observationsOver1;
+				var tbl = new LogTableDecorator(document.getElementById("tblLog"));
+				tbl.clear();
+				for(var i=0;i<oLog.shells.length;i++){ tbl.addShell(oLog.shells[i], false); }
+				tbl.addShell(oLog.shells.total, true);
+				if(oSca !== null || !useSca){ funcProc(); }
+			};
+			readerSca.onload = function(e) {
+				tdSca.textContent = "Parsing";
+				var lines = e.target.result.trim().split("\n");
+				oSca = new ScaFile(lines);
+				tdSca.textContent = "Done";
+				if(oLog !== null){ funcProc(); }
+			};
+			var funcProc = function() {
+				var tbl = new ScaTableDecorator(document.getElementById("tblSca"));
+				tbl.clear();
+				if(useSca){
+					for(var i=0;i<oLog.absenceLines.length;i++){
+						oSca.reflections.push(Reflection.fromScaLine(oLog.absenceLines[i], oSca.cell));
+					}
+					oSca.reflections.sort();
+					var shells = oSca.reflections.createScalepackShells(oLog.shells);
+					for(var i=0;i<shells.length;i++){ tbl.addShell(shells[i], oLog.shells[i], false); }
+					tbl.addShell(oSca.reflections, oLog.shells.total, true);
+					drawWilsonPlot(oSca, oLog);
+				}
+				drawMosaicity(oLog);
+				drawCrystalRotations(oLog);
+			};
+			
+			tdLog.textContent = "Reading";
+			readerLog.readAsText(logFile);
+			if(useSca){
+				tdSca.textContent = "Reading";
+				readerSca.readAsText(scaFile);
+			}
+		}, false);
+		document.getElementById("chkUseSca").addEventListener("change", function(e) {
+			useSca = e.target.checked;
+			document.getElementById("fileSca").disabled = !useSca;
+		}, false);
+		document.getElementById("fileSca").disabled = !document.getElementById("chkUseSca").checked;
+	}, false);
+  </script>
+  <style type="text/css">
+  	h1 { border-bottom: 1px solid #000099; border-left: .5em solid #000099; margin: 5px 0; padding: 5px; }
+  	h2 { margin: 5px 0; padding: 0 0.5em; background-color: #000099; color: white; font-size: medium; font-family: Arial, sans-serif; }
+  	p { color: #666666; font-size: small; margin: 0.5em; }
+  	.stats-table { border-collapse: collapse; }
+    .stats-table td { border: 1px solid #9999ff; }
+    .stats-table tbody tr td, .stats-table tfoot tr td { width: 4em; text-align: right; padding: 0 .5em; font-family: monospace; }
+    .stats-table tfoot tr td { font-weight: bold; background-color: #ccccff; }
+    .stats-table thead tr td { text-align: center; font-size: small; font-family: Arial, sans-serif; font-weight: bold; background-color: #ccccff; }
+  </style>
+</head>
+<body>
+  <h1>ScaView - <i>SCALEPACK</i> Log and SCA viewer</h1>
+  <p>
+    <strong>alpha-release(2012-01-04.final) by Nobuo OKAZAKI</strong><br/>
+    This page requires File API implementation and may work on Firefox 4, Google Chrome 5, or higher.<br />
+    This tool processes files locally and never sends any data to the web!!
+  </p>
+  <table>
+    <tr><td colspan="2"><input type="checkbox" id="chkUseSca" checked="checked" /><label for="chkUseSca">Calculate with sca file</label></td></tr>
+    <tr><td>SCALEPACK .sca file:</td><td><input type="file" id="fileSca" size="100" /></td><td id="scaStatus" style="color:red">Ready</td></tr>
+    <tr><td>SCALEPACK .log file:</td><td><input type="file" id="fileLog" size="100" /></td><td id="logStatus" style="color:red">Ready</td></tr>
+    <tr><td colspan="2"><input type="button" value="Start" id="cmdReadLog" /></td></tr>
+  </table>
+  <hr />
+  <h2>Summary from log file</h2>
+  <table class="stats-table">
+    <thead>
+      <tr><td colspan="2">Observations</td></tr>
+      <tr><td>All</td><td>Over 1</td></tr>
+    </thead>
+    <tfoot></tfoot>
+    <tbody><tr><td id="tdAllObservations"></td><td id="tdObservationsOver1"></td></tr></tbody>
+  </table>
+  <br />
+  <table id="tblLog" class="stats-table">
+    <thead>
+      <tr>
+        <td colspan="2">Range</td>
+        <td rowspan="2">&lt;I&gt;</td><td rowspan="2">&lt;&sigma;(I)&gt;</td>
+        <td rowspan="2">&lt;I&gt;/&lt;&sigma;(I)&gt;</td><td rowspan="2">chi<sup>2</sup></td>
+        <td rowspan="2">Redun.</td><td colspan="2"><i>R</i><sub>merge</sub></td>
+        <td rowspan="2">Comp.<br />(%)</td>
+        <td rowspan="2">Count</td>
+      </tr>
+      <tr><td>Lower</td><td>Upper</td><td>Lin.</td><td>Sq.</td></tr>
+    </thead>
+    <tfoot></tfoot>
+    <tbody></tbody>
+  </table>
+  <input type="button" id="cmdSave" value="Save to CSV" />
+  <hr />
+  <h2>Calculated &lt;I/&sigma;(I)&gt; with sca file (includes systematic absences from log file)</h2>
+  <table id="tblSca" class="stats-table">
+    <thead>
+      <tr>
+        <td colspan="2">Range</td>
+        <td colspan="2">&lt;I&gt;</td><td colspan="2">&lt;&sigma;(I)&gt;</td>
+        <td colspan="2">&lt;I&gt;/&lt;&sigma;(I)&gt;</td><td rowspan="2">&lt;I/&sigma;(I)&gt;</td>
+        <td rowspan="2">Count</td>
+      </tr>
+      <tr>
+        <td>Lower</td><td>Upper</td>
+        <td>Calc.</td><td>Diff.</td><td>Calc.</td><td>Diff.</td><td>Calc.</td><td>Diff.</td></tr>
+    </thead>
+    <tfoot></tfoot>
+    <tbody></tbody>
+  </table>
+  <input type="button" id="cmdSaveSca" value="Save to CSV" />
+  <hr />
+  <table>
+    <tr>
+      <td><h2>Wilson-like plot</h2></td>
+      <td><h2>Mosaicity</h2></td>
+      <td><h2>Crystal rotations</h2></td>
+    </tr>
+    <tr>
+      <td><canvas id="canvas1" width="300" height="200" style="border:1px solid blue"></canvas></td>
+      <td><canvas id="canvas2" width="300" height="200" style="border:1px solid blue"></canvas></td>
+      <td><canvas id="canvas3" width="300" height="200" style="border:1px solid blue"></canvas></td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Statistics factors</title>
+  <style type="text/css">
+  	h1 { border-bottom: 1px solid #000099; border-left: .5em solid #000099; margin: 5px 0; padding: 5px; }
+  	h2 { margin: 5px 0; padding: 0 0.5em; background-color: #000099; color: white; font-size: medium; font-family: Arial, sans-serif; }
+  	i, sub { font-family: Times, sans-serif; }
+  	p { color: #666666; font-size: small; margin: 0.5em; }
+  	.stats-table { border-collapse: collapse; }
+    .stats-table td { border: 1px solid #9999ff; }
+    .stats-table tbody tr td, .stats-table tfoot tr td { width: 4em; text-align: right; padding: 0 .5em; font-family: monospace; }
+    .stats-table tfoot tr td { font-weight: bold; background-color: #ccccff; }
+    .stats-table thead tr td { text-align: center; font-size: small; font-family: Arial, sans-serif; font-weight: bold; background-color: #ccccff; }
+  </style>
+</head>
+<body>
+<h1>R factors</h1>
+<p>This page requires MathML which is supported by Firefox.</p>
+<h2>Processing</h2>
+<ul>
+  <li>
+    The <i>R</i> value for merging all intensities in this data set.
+    <ul>
+      <li>
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow>
+        <mstyle mathsize="100%">
+          <msub><mi>R</mi><mtext>merge</mtext></msub>
+          <mo>=</mo>
+          <msub><mi>R</mi><mtext>sym</mtext></msub>
+          <mo>=</mo>
+          <mstyle mathsize="140%">
+            <mfrac>
+              <mrow>
+                <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                <msub><mo>&Sum;</mo><mi>i</mi></msub>
+                <mfenced open="|" close="|" separators=",">
+                  <mrow>
+                    <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                    <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+                    <mo>-</mo>
+                    <mfenced open="&langle;" close="&rangle;" separators="|">
+                      <mrow><mi>I</mi><mo>&ApplyFunction;</mo><mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced></mrow>
+                    </mfenced>
+                  </mrow>
+                </mfenced>
+              </mrow>
+              <mrow>
+                <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                <msub><mo>&Sum;</mo><mi>i</mi></msub>
+                <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+              </mrow>
+            </mfrac>
+          </mstyle mathsize="140%">
+        </mstyle>
+      </mrow>
+    </math>
+      </li>
+    </ul>
+    where <i>I</i> is the observed intensity and &lt;<i>I</i>&gt; is the average intensity of multiple observations of symmetry-related reflections.<br />
+    <a href="http://www.iucr.org/__data/iucr/cifdic_html/2/mmcif_pdbx.dic/Ireflns.pdbx_Rmerge_I_all.html">http://www.iucr.org/__data/iucr/cifdic_html/2/mmcif_pdbx.dic/Ireflns.pdbx_Rmerge_I_all.html</a>
+  </li>
+  <li>
+    The redundancy-independent merging <i>R</i> factor value <i>R</i><sub>r.i.m.</sub>, also denoted <i>R</i><sub>meas</sub>, for merging all intensities in this data set.
+    <ul>
+      <li>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow>
+            <mstyle mathsize="100%">
+              <msub><mi>R</mi><mtext>meas</mtext></msub>
+              <mo>=</mo>
+              <msub><mi>R</mi><mtext>r.i.m.</mtext></msub>
+              <mo>=</mo>
+              <mstyle mathsize="140%">
+                <mfrac>
+                  <mrow>
+                  <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                  <msqrt>
+                    <mrow>
+                      <mrow>
+                        <mfrac>
+                          <msub><mi>N</mi><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                          <mrow><msub><mi>N</mi><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub><mo>-</mo><mn>1</mn></mrow>
+                        </mfrac>
+                      </mrow>
+                    </mrow>
+                  </msqrt>
+                  <msub><mo>&Sum;</mo><mi>i</mi></msub>
+                  <mfenced open="|" close="|" separators=",">
+                    <mrow>
+                      <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                      <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+                      <mo>-</mo>
+                      <mfenced open="&langle;" close="&rangle;" separators="|">
+                        <mrow><mi>I</mi><mo>&ApplyFunction;</mo><mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced></mrow>
+                      </mfenced>
+                    </mrow>
+                  </mfenced>
+                  </mrow>
+                  <mrow>
+                  <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                  <msub><mo>&Sum;</mo><mi>i</mi></msub>
+                  <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                  <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+                  </mrow>
+                </mfrac>
+              </mstyle>
+            </mstyle>
+          </mrow>
+        </math>
+      </li>
+    </ul>
+    <a href="http://www.iucr.org/__data/iucr/cifdic_html/2/mmcif_pdbx.dic/Ireflns.pdbx_Rrim_I_all.html">http://www.iucr.org/__data/iucr/cifdic_html/2/mmcif_pdbx.dic/Ireflns.pdbx_Rrim_I_all.html</a>
+  </li>
+  <li>
+    The precision-indicating merging <i>R</i> factor value <i>R</i><sub>p.i.m.</sub>
+    <ul>
+      <li>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow>
+            <mstyle mathsize="100%">
+              <msub><mi>R</mi><mtext>p.i.m.</mtext></msub>
+              <mo>=</mo>
+              <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+              <msup>
+                <mrow>
+                  <mfenced open="[" close="]" separators=",">
+                    <mrow>
+                      <mn>1</mn>
+                      <mo>/</mo>
+                      <mfenced open="(" close=")" separators=",">
+                        <mrow><msub><mi>N</mi><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub><mo>-</mo><mn>1</mn></mrow>
+                      </mfenced>
+                    </mrow>
+                  </mfenced>
+                </mrow>
+                <mrow><mn>1</mn><mo>/</mo><mn>2</mn></mrow>
+              </msup>
+              <msub><mo>&Sum;</mo><mi>i</mi></msub>
+              <mfenced open="|" close="|" separators=",">
+                <mrow>
+                  <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                  <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+                  <mo>-</mo>
+                  <mfenced open="&langle;" close="&rangle;" separators="|">
+                    <mrow><mi>I</mi><mo>&ApplyFunction;</mo><mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced></mrow>
+                  </mfenced>
+                </mrow>
+              </mfenced>
+              <mo>/</mo>
+              <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+              <msub><mo>&Sum;</mo><mi>i</mi></msub>
+              <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+              <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+            </mstyle>
+          </mrow>
+        </math>
+      </li>
+      <li>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow>
+            <mstyle mathsize="100%">
+              <msub><mi>R</mi><mtext>p.i.m.</mtext></msub>
+              <mo>=</mo>
+              <mstyle mathsize="140%">
+                <mfrac>
+                  <mrow>
+                  <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                  <msqrt>
+                    <mrow>
+                      <mrow>
+                        <mfrac>
+                          <mn>1</mn>
+                          <mrow><msub><mi>N</mi><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub><mo>-</mo><mn>1</mn></mrow>
+                        </mfrac>
+                      </mrow>
+                    </mrow>
+                  </msqrt>
+                  <msub><mo>&Sum;</mo><mi>i</mi></msub>
+                  <mfenced open="|" close="|" separators=",">
+                    <mrow>
+                      <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                      <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+                      <mo>-</mo>
+                      <mfenced open="&langle;" close="&rangle;" separators="|">
+                        <mrow><mi>I</mi><mo>&ApplyFunction;</mo><mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced></mrow>
+                      </mfenced>
+                    </mrow>
+                  </mfenced>
+                  </mrow>
+                  <mrow>
+                  <msub><mo>&Sum;</mo><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></msub>
+                  <msub><mo>&Sum;</mo><mi>i</mi></msub>
+                  <msub><mrow><mi>I</mi><mo>&ApplyFunction;</mo></mrow><mi>i</mi></msub>
+                  <mfenced open="(" close=")" separators=","><mrow><mi>h</mi><mi>k</mi><mi>l</mi></mrow></mfenced>
+                  </mrow>
+                </mfrac>
+              </mstyle>
+            </mstyle>
+          </mrow>
+        </math>
+      </li>
+    </ul>
+    where <i>N</i> is the redundancy (the number of times reflection <i>hkl</i> has been measured).<br />
+    <a href="http://www.iucr.org/__data/iucr/cifdic_html/2/mmcif_pdbx.dic/Ireflns.pdbx_Rpim_I_all.html">http://www.iucr.org/__data/iucr/cifdic_html/2/mmcif_pdbx.dic/Ireflns.pdbx_Rpim_I_all.html</a>
+  </li>
+</ul>
+<h2>Refinement</h2>
+<ul>
+  <li>
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow>
+        <msub><mi>R</mi><mtext>work</mtext></msub>
+        <mo>=</mo>
+        <mstyle mathsize="140%">
+          <mfrac>
+            <mrow>
+              <mo>&Sum;</mo>
+              <mfenced open="|" close="|" separators=",">
+                <mrow>
+                  <mfenced open="|" close="|" separators=",">
+                    <mrow><msub><mi>F</mi><mtext>obs</mtext></msub></mrow>
+                  </mfenced>
+                  <mo>-</mo>
+                  <mfenced open="|" close="|" separators=",">
+                    <mrow><msub><mi>F</mi><mtext>calc</mtext></msub></mrow>
+                  </mfenced>
+                </mrow>
+              </mfenced>
+            </mrow>
+            <mrow>
+              <mo>&Sum;</mo>
+              <mfenced open="|" close="|" separators=",">
+                <mrow><msub><mi>F</mi><mtext>obs</mtext></msub></mrow>
+              </mfenced>
+            </mrow>
+          </mfrac>
+        </mstyle>
+      </mrow>
+    </math>
+    , where <i>F</i><sub>obs</sub> and <i>F</i><sub>calc</sub> are the observed and calculated structure factors, respectively.
+  </li>
+  <li><i>R</i><sub>free</sub> is calculated as <i>R</i><sub>work</sub> using 5% of all reflections randomly chosen and excluded from structure calculation and refinement.</li>
+</ul>
+</body>
+</html>

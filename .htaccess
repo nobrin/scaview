@@ -1,0 +1,7 @@
+AddHandler cgi-script .py
+RewriteEngine on
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.+)\.html$ /devel/hkl/_embed.py?html=$1 [L]
+RewriteRule ^(scaview)\.html$ /devel/hkl/_embed.py?html=$1 [L]
+
